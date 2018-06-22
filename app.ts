@@ -45,26 +45,20 @@ server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
     adapter.processActivity(req, res, async (context) => {
         const state = conversationState.get(context);
-        
         if (context.activity.type === 'conversationUpdate' && context.activity.membersAdded[0].name !== 'Bot') {
             await context.sendActivity(`Welcome to the number guessing game! Guess a number from 1-20. (${state.randNum})`);  
             var randomNumber : string;
             randomNumber = 
                 await fetch('http://localhost:3000/api/random-number')
                 .then(function (response) {
-                    console.log("response: " + response);                    
                     return response.text();
                 })
                 .then(function (num) {
-                    // randomNumber = num;
-                    console.log("num: " + num);
                     return num;
                 })
                 .catch(function (error) {
-                    console.log(error);
                     return '-1';
                 });
-            console.log(randomNumber)
             state.randNum = parseInt(randomNumber);
             await context.sendActivity(`${state.randNum}`)
         }

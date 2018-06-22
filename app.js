@@ -43,19 +43,14 @@ server.post('/api/messages', (req, res) => {
             randomNumber =
                 yield fetch('http://localhost:3000/api/random-number')
                     .then(function (response) {
-                    console.log("response: " + response);
                     return response.text();
                 })
                     .then(function (num) {
-                    // randomNumber = num;
-                    console.log("num: " + num);
                     return num;
                 })
                     .catch(function (error) {
-                    console.log(error);
                     return '-1';
                 });
-            console.log(randomNumber);
             state.randNum = parseInt(randomNumber);
             yield context.sendActivity(`${state.randNum}`);
         }

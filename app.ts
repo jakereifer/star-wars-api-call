@@ -49,15 +49,23 @@ server.post('/api/messages', (req, res) => {
         if (context.activity.type === 'conversationUpdate' && context.activity.membersAdded[0].name !== 'Bot') {
             await context.sendActivity(`Welcome to the number guessing game! Guess a number from 1-20. (${state.randNum})`);  
             var randomNumber : string;
-            randomNumber = await fetch('localhost:3000/api/random-number')
+            randomNumber = 
+                await fetch('https://swapi.co/api/people/1')
                 .then(function (response) {
-                    return response.text();
-                    
+                    console.log("response: " + response);                    
+                    return response.json();
                 })
                 .then(function (num) {
                     // randomNumber = num;
-                    return num;
-                }).catch(function () {return '-1'});
+                    console.log("num: " + num);
+                    console.log("num.name: " + num.name);
+                    return num.name;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    return '-1';
+                });
+            console.log(randomNumber)
             state.randNum = parseInt(randomNumber);
             await context.sendActivity(`${state.randNum}`)
         }

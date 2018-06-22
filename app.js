@@ -40,14 +40,23 @@ server.post('/api/messages', (req, res) => {
         if (context.activity.type === 'conversationUpdate' && context.activity.membersAdded[0].name !== 'Bot') {
             yield context.sendActivity(`Welcome to the number guessing game! Guess a number from 1-20. (${state.randNum})`);
             var randomNumber;
-            randomNumber = yield fetch('localhost:3000/api/random-number')
-                .then(function (response) {
-                return response.text();
-            })
-                .then(function (num) {
-                // randomNumber = num;
-                return num;
-            }).catch(function () { return '-1'; });
+            randomNumber =
+                yield fetch('https://swapi.co/api/people/1')
+                    .then(function (response) {
+                    console.log("response: " + response);
+                    return response.json();
+                })
+                    .then(function (num) {
+                    // randomNumber = num;
+                    console.log("num: " + num);
+                    console.log("num.name: " + num.name);
+                    return num.name;
+                })
+                    .catch(function (error) {
+                    console.log(error);
+                    return '-1';
+                });
+            console.log(randomNumber);
             state.randNum = parseInt(randomNumber);
             yield context.sendActivity(`${state.randNum}`);
         }

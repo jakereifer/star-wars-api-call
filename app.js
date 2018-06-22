@@ -10,6 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const restify = require("restify");
+require('es6-promise').polyfill();
+require('isomorphic-fetch');
 // Create server
 let server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
@@ -36,7 +38,18 @@ server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
         const state = conversationState.get(context);
         if (context.activity.type === 'conversationUpdate' && context.activity.membersAdded[0].name !== 'Bot') {
-            return context.sendActivity('Welcome to the number guessing game! Guess a number from 1-20.');
+            yield context.sendActivity(`Welcome to the number guessing game! Guess a number from 1-20. (${state.randNum})`);
+            var randomNumber;
+            randomNumber = yield fetch('localhost:3000/api/random-number')
+                .then(function (response) {
+                return response.text();
+            })
+                .then(function (num) {
+                // randomNumber = num;
+                return num;
+            }).catch(function () { return '-1'; });
+            state.randNum = parseInt(randomNumber);
+            yield context.sendActivity(`${state.randNum}`);
         }
         if (context.activity.type === 'message') {
             const randNum = state.randNum === undefined ? state.randNum = Math.floor(Math.random() * 20 + 1) : state.randNum = state.randNum;

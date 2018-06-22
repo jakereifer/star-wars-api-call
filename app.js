@@ -41,16 +41,15 @@ server.post('/api/messages', (req, res) => {
             yield context.sendActivity(`Welcome to the number guessing game! Guess a number from 1-20. (${state.randNum})`);
             var randomNumber;
             randomNumber =
-                yield fetch('https://swapi.co/api/people/1')
+                yield fetch('http://localhost:3000/api/random-number')
                     .then(function (response) {
                     console.log("response: " + response);
-                    return response.json();
+                    return response.text();
                 })
                     .then(function (num) {
                     // randomNumber = num;
                     console.log("num: " + num);
-                    console.log("num.name: " + num.name);
-                    return num.name;
+                    return num;
                 })
                     .catch(function (error) {
                     console.log(error);
